@@ -1,39 +1,76 @@
 class SinglyLinkedList():
 
   class Node:
+    """
+    Represents a SinglyLinkedList node
+    """
     def __init__(self, data):
       self.data = data
       self.next = None
 
     def set_next(self, node):
+      """
+      Changes the next node pointer value
+      """
       self.next = node
 
     def get_next(self):
+      """
+      Returns the next node pointer value
+      """
       return self.next
 
     def get_data(self):
+      """
+      Returns the node data value
+      """
       return self.data
+
+    def set_data(self, value):
+      """
+      Changes the node data value
+      """
+      self.data = value
 
 
   def __init__(self):
     self.head = None
+    self.length = 0
 
-  def add(self, value):
+  def push(self, value):
+    """
+    Inserts new node at the beginning of the list
+    """
+    new_node = self.Node(value)
+    new_node.set_next(self.head)
+
+    self.head = new_node
+    
+    self.length += 1
+
+  def append(self, value):
+    """
+    Inserts new node at the end of the list
+    """
     new_node = self.Node(value)
 
-    if self.head is None:
+    current_node = self.head
+    if current_node is None:
       self.head = new_node
     else:
-      current_node = self.head
-
       while current_node.get_next() is not None:
         current_node = current_node.get_next()
 
       current_node.set_next(new_node)
 
+    self.length += 1
+
   def remove_by_index(self, index):
-    if index >= len(self):
-      return
+    """
+    Removes element by index
+    """
+    if index >= self.length or index < 0:
+      raise IndexError('List index out of bounds')
 
     i = 0
     previous_node = None
@@ -49,39 +86,97 @@ class SinglyLinkedList():
     else:
       previous_node.set_next(current_node.get_next())
 
-  def remove_by_value(self, value, one_shot = True):
+    self.length -= 1
+
+  def remove_by_value(self, value, single_value = True):
+    """
+    Removes element by value
+    """
     current_node = self.head
     previous_node = None
 
-    if self.head.get_data() == value:
-      self.head = self.head.get_next()
-      return
+    while current_node is not None:
+      if current_node.get_data() == value:
+        if current_node == self.head:
+          self.head = current_node.get_next()
+        else:
+          previous_node.set_next(current_node.get_next())
+        self.length -= 1
 
-    while current_node.get_next() is not None:
+      if single_value:
+        break
+
       previous_node = current_node
       current_node = current_node.get_next()
 
-      if current_node.get_data() == value:
-        previous_node.set_next(current_node.get_next())
+  def get_by_index(self, index):
+    """
+    Returns the data value of the node at the specified index
+    """
+    if index < 0 or index >= self.length:
+      raise IndexError('List index out of bounds')
 
-        if one_shot:
-          break
-
-  def __len__(self):
-    count = 0
+    i = 0
     current_node = self.head
 
-    if current_node is None:
-      return count
-
-    count += 1
-    while current_node.get_next() is not None:
-      count += 1
+    while i < index:
       current_node = current_node.get_next()
 
-    return count
+    return current_node.get_data()
+
+  def index_of(self, value):
+    """
+    Returns the node index of the first occurrence of the value in the list
+    """
+
+    i = 0
+    current_node = self.head
+
+    if current_node.get_data() == value:
+      return i
+
+    while current_node.get_next() is not None:
+      current_node = current_node.get_next()
+      i += 1
+
+      if current_node.get_data() == value:
+        return i
+
+    return -1
+
+  def update_by_index(self, index, value):
+    """
+    Updates the data value of the node at the specified index of the list
+    """
+
+    if index < 0 or index >= self.length:
+      raise IndexError('List index out of bounds')
+
+    i = 0
+    current_node = self.head
+
+    if i == index:
+      current_node.set_data(value)
+
+    while current_node.get_next() is not None:
+      current_node = current_node.get_next()
+      i += 1
+
+      if i == index:
+        current_node.set_data(value)
+        return
+
+
+  def __len__(self):
+    """
+    Returns the current length of the list when the list is passed to len function
+    """
+    return self.length
 
   def __str__(self):
+    """
+    Returns textual notation of the list
+    """
     current_node = self.head
     _str = '['
     
